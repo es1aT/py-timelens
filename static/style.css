@@ -1,0 +1,177 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f4f4f9;
+  font-size: 14px;
+  /* 全体的な文字サイズを小さく設定 */
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  /* タイトルの文字サイズを調整 */
+}
+
+.container {
+  width: 90%;
+  margin: 0 auto;
+}
+
+textarea {
+  width: 100%;
+  height: 200px;
+  padding: 8px;
+  /* パディングを少し小さく */
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  /* テキストエリアの文字サイズを小さく */
+  font-family: "Courier New", Courier, monospace;
+  resize: vertical;
+}
+
+.input-output-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.input-section,
+.output-section,
+.error-section {
+  width: 32%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.output-section,
+.error-section {
+  height: 200px;
+  background-color: #eaeaea;
+  border-radius: 5px;
+  padding: 8px;
+  /* パディングを少し小さく */
+  overflow-y: auto;
+}
+
+.execution-info {
+  width: 32%;
+  box-sizing: border-box;
+  background-color: transparent;
+  /* 背景色を透明に設定 */
+  border: none;
+  /* 枠線を削除 */
+  border-radius: 5px;
+  padding: 8px;
+  /* パディングを少し小さく */
+  height: auto;
+  /* 高さを自動調整 */
+  overflow-y: auto;
+}
+
+.label-cell {
+  text-align: center;
+  /* ラベルを中央寄せ */
+  font-weight: bold;
+}
+
+.value-cell {
+  text-align: right;
+  /* 値を右寄せ */
+}
+
+.input-label,
+.output-label,
+.error-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  /* ラベルの文字サイズを小さく */
+}
+
+button {
+  margin-top: 20px;
+  padding: 8px 16px;
+  /* パディングを少し小さく */
+  font-size: 14px;
+  /* ボタンの文字サイズを小さく */
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #43a944;
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* ローディングオーバーレイのスタイル */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: none;
+  /* 初期状態は非表示 */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* スピナーのスタイル */
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #5cb85c;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+/* スピナーのアニメーション */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 実行情報テーブルのスタイル */
+.execution-info table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.execution-info table td {
+  padding: 6px;
+  /* テーブルセルのパディングを小さく */
+  border: 1px solid #ccc;
+  font-size: 14px;
+  /* テーブルの文字サイズを小さく */
+}
+
+.execution-info table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.execution-info table tr:hover {
+  background-color: #f1f1f1;
+}

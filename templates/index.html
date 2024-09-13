@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeProfiler</title>
+    <!-- 外部CSSファイルのリンク -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>CodeProfiler</h1>
+
+      <!-- フォームを使ってサーバーに送信 -->
+      <form id="codeForm" action="/" method="POST">
+        <!-- Pythonコード入力エリア -->
+        <label for="code-input" class="input-label">Pythonコード</label>
+        <textarea
+          id="code-input"
+          name="code"
+          placeholder="ここにPythonコードを入力..."
+          required
+        >
+{{ code }}</textarea
+        >
+
+        <!-- 標準入力エリア -->
+        <label for="stdin-input" class="input-label">標準入力</label>
+        <textarea
+          id="stdin-input"
+          name="stdin"
+          placeholder="標準入力をここに入力..."
+        >
+{{ stdin_input }}</textarea
+        >
+
+        <!-- 実行ボタン -->
+        <button id="executeButton" type="submit">実行</button>
+      </form>
+
+      <!-- 出力結果と標準エラー表示エリア -->
+      <div class="input-output-container">
+        <!-- 出力結果 -->
+        <div class="output-section">
+          <span class="output-label">出力結果:</span>
+          <pre>{{ output }}</pre>
+        </div>
+
+        <!-- 実行情報 -->
+        <div class="execution-info">
+          <table>
+            <tr>
+              <td class="label-cell">ステータス</td>
+              <td class="value-cell">{{ status }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">実行時間</td>
+              <td class="value-cell">{{ exec_time | round(2) }} ms</td>
+            </tr>
+            <tr>
+              <td class="label-cell">メモリ</td>
+              <td class="value-cell">{{ memory_usage }} KB</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 標準エラー -->
+        <div class="error-section">
+          <span class="error-label">標準エラー:</span>
+          <pre>{{ error }}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ローディングオーバーレイを追加 -->
+    <div id="loadingOverlay" style="display: none">
+      <div class="spinner"></div>
+      <p>実行中...</p>
+    </div>
+
+    <!-- 外部JavaScriptファイルの読み込み -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
