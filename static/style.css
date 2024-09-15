@@ -1,119 +1,169 @@
+/* 全体のスタイル */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f4f4f9;
-  font-size: 14px;
-  /* 全体的な文字サイズを小さく設定 */
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f0f2f5;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
-  font-size: 24px;
-  /* タイトルの文字サイズを調整 */
-}
-
+/* コンテナのスタイル */
 .container {
-  width: 90%;
-  margin: 0 auto;
+  max-width: 950px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  /* 縦線を絶対配置するために相対配置 */
+  border-radius: 8px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-textarea {
-  width: 100%;
-  height: 200px;
-  padding: 8px;
-  /* パディングを少し小さく */
-  margin-top: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  /* テキストエリアの文字サイズを小さく */
-  font-family: "Courier New", Courier, monospace;
-  resize: vertical;
-}
-
-.input-output-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
-.input-section,
-.output-section,
-.error-section {
-  width: 32%;
-  box-sizing: border-box;
+/* フォームグループのスタイル */
+.form-group {
+  position: relative;
   margin-bottom: 20px;
 }
 
-.output-section,
-.error-section {
-  height: 200px;
-  background-color: #eaeaea;
-  border-radius: 5px;
-  padding: 8px;
-  /* パディングを少し小さく */
-  overflow-y: auto;
+/* 縦線の基本スタイル */
+.vertical-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -20px;
+  /* コード入力欄の外側に寄せる */
+  width: 3px;
+  /* 縦線の幅を太く */
+  background: linear-gradient(to bottom, #4caf50, #81c784);
+  /* グラデーションを追加 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* シャドウを追加 */
 }
 
-.execution-info {
-  width: 32%;
-  box-sizing: border-box;
-  background-color: transparent;
-  /* 背景色を透明に設定 */
-  border: none;
-  /* 枠線を削除 */
-  border-radius: 5px;
-  padding: 8px;
-  /* パディングを少し小さく */
-  height: auto;
-  /* 高さを自動調整 */
-  overflow-y: auto;
+/* 最初のフォームグループ（Pythonコード入力）に対する縦線の位置調整 */
+.form-group:first-child .vertical-line {
+  left: -30px;
+  /* さらに左に寄せる */
 }
 
-.label-cell {
+/* レスポンシブ対応: 小さい画面では縦線を非表示にする */
+@media (max-width: 768px) {
+  .vertical-line {
+    display: none;
+  }
+}
+
+/* アニメーションの定義 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* 見出しのスタイル */
+h1 {
   text-align: center;
-  /* ラベルを中央寄せ */
-  font-weight: bold;
+  color: #333333;
+  margin-bottom: 30px;
 }
 
-.value-cell {
-  text-align: right;
-  /* 値を右寄せ */
-}
-
-.input-label,
-.output-label,
-.error-label {
-  font-weight: bold;
+/* ラベルのスタイル */
+.input-label {
   display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  /* ラベルの文字サイズを小さく */
+  margin-top: 10px;
+  font-weight: bold;
+  color: #555555;
 }
 
-button {
-  margin-top: 20px;
-  padding: 8px 16px;
-  /* パディングを少し小さく */
+/* テキストエリアのスタイル */
+textarea {
+  width: 100%;
+  height: 180px;
+  padding: 15px;
+  margin-top: 5px;
+  resize: vertical;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
-  /* ボタンの文字サイズを小さく */
-  background-color: #5cb85c;
-  color: white;
+  background-color: #fafafa;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  outline: none;
+}
+
+/* ボタンのスタイル */
+button {
+  margin-top: 25px;
+  padding: 12px 25px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #4caf50;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
-  background-color: #43a944;
+  background-color: #45a049;
+  transform: scale(1.05);
 }
 
-button:disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
+/* 入力と出力のコンテナ */
+.input-output-container {
+  margin-top: 40px;
+}
+
+/* 出力セクションとエラーセクションのスタイル */
+.output-section,
+.error-section {
+  margin-top: 25px;
+}
+
+.output-label,
+.error-label {
+  font-weight: bold;
+  color: #333333;
+}
+
+/* 実行情報のテーブルスタイル */
+.execution-info table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.label-cell {
+  width: 150px;
+  font-weight: bold;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
+
+.value-cell {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+/* preタグのスタイル */
+pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 /* ローディングオーバーレイのスタイル */
@@ -124,26 +174,23 @@ button:disabled {
   width: 100%;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.8);
-  display: none;
-  /* 初期状態は非表示 */
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 2000;
 }
 
-/* スピナーのスタイル */
 .spinner {
   border: 8px solid #f3f3f3;
-  border-top: 8px solid #5cb85c;
+  border-top: 8px solid #4caf50;
   border-radius: 50%;
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-/* スピナーのアニメーション */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -154,24 +201,84 @@ button:disabled {
   }
 }
 
-/* 実行情報テーブルのスタイル */
-.execution-info table {
+#loadingOverlay p {
+  font-size: 18px;
+  color: #333333;
+}
+
+/* スクロールバーのカスタマイズ（オプション） */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+}
+
+.input-output-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  /* 各セクションを同じ高さにする */
+}
+
+.output-section,
+.execution-info,
+.error-section {
+  flex: 1;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.output-section pre,
+.error-section pre {
+  flex-grow: 1;
+  /* コンテンツが垂直に伸びるようにする */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+table {
   width: 100%;
-  border-collapse: collapse;
+  height: 100%;
+  /* テーブルを全体に広げる */
 }
 
-.execution-info table td {
-  padding: 6px;
-  /* テーブルセルのパディングを小さく */
-  border: 1px solid #ccc;
-  font-size: 14px;
-  /* テーブルの文字サイズを小さく */
+.label-cell {
+  font-weight: bold;
 }
 
-.execution-info table tr:nth-child(odd) {
-  background-color: #f9f9f9;
+h1 {
+  font-size: 30px;
+  font-size: 3rem;
+  position: relative;
+  padding: 1.5rem;
+  text-align: center;
 }
 
-.execution-info table tr:hover {
-  background-color: #f1f1f1;
+h1 span {
+  font-size: 18px;
+  font-size: 1.8rem;
+  display: block;
+}
+
+h1:before {
+  position: absolute;
+  bottom: -10px;
+  left: calc(50% - 30px);
+  width: 60px;
+  height: 5px;
+  content: '';
+  border-radius: 3px;
+  background: #65ca50;
 }
