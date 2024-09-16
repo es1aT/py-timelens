@@ -59,11 +59,11 @@
               <td class="value-cell">{{ status }}</td>
             </tr>
             <tr>
-              <td class="label-cell">実行時間</td>
+              <td class="label-cell">全体の実行時間</td>
               <td class="value-cell">{{ exec_time | round(1) }} ms</td>
             </tr>
             <tr>
-              <td class="label-cell">メモリ</td>
+              <td class="label-cell">総使用メモリ量</td>
               <td class="value-cell">{{ memory_usage }} KB</td>
             </tr>
           </table>
@@ -74,6 +74,12 @@
           <span class="error-label">標準エラー:</span>
           <pre>{{ error }}</pre>
         </div>
+      </div>
+
+      <!-- プロファイリング出力結果エリア -->
+      <div class="profiling-output-section">
+        <h2>プロファイリング結果:</h2>
+        <pre>{{ profiled_output }}</pre>  <!-- fu.pyの出力結果を表示 -->
       </div>
 
       <!-- プロファイリンググラフ表示エリア -->
@@ -88,64 +94,4 @@
     <!-- ローディングオーバーレイを追加 -->
     <div id="loadingOverlay" style="display: none">
       <div class="spinner"></div>
-      <p>実行中...</p>
-    </div>
-
-    <!-- 外部JavaScriptファイルの読み込み -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    {% if profile_data %}
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const profileData = {{ profile_data | tojson }};
-        const labels = profileData.map(item => `Line ${item.lineno}`);
-        const data = profileData.map(item => item.time_ms);
-
-        const ctx = document.getElementById('profileChart').getContext('2d');
-        const profileChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: '実行時間 (ms)',
-              data: data,
-              backgroundColor: 'rgba(54, 162, 235, 0.6)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: '行番号'
-                }
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: '実行時間 (ms)'
-                }
-              }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const index = context.dataIndex;
-                    const line = profileData[index].line;
-                    const time = context.parsed.y;
-                    return ` ${time} ms - ${line}`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      });
-    </script>
-    {% endif %}
-  </body>
-</html>
+      <p

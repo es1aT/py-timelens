@@ -5,6 +5,7 @@ import os
 import time
 import psutil  # psutilをインポート
 import threading
+from profiler import run_profiled_code  # profiler.pyの関数をインポート
 
 app = Flask(__name__)
 
@@ -18,6 +19,7 @@ def index():
     exec_time = 0.0  # 実行時間をミリ秒で保持
     memory_usage = 0  # メモリ使用量をKBで保持
     status = ''  # 実行ステータス
+    profiled_output = ''  # profiler.pyの出力を保持する
 
     if request.method == 'POST':
         code = request.form['code']
@@ -41,9 +43,7 @@ def index():
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True  # Python 3.7以降
-                # Python 3.6以前の場合は、universal_newlines=True を使用
-                # universal_newlines=True
+                text=True
             )
 
             # プロセスのPIDを取得してpsutilで監視
@@ -110,6 +110,9 @@ def index():
             if temp_file_name and os.path.exists(temp_file_name):
                 os.remove(temp_file_name)
 
+        # profiler.pyのプロファイル出力を実行
+        profiled_output = run_profiled_code(code, stdin_input)
+
         # 結果をテンプレートに渡す
         return render_template(
             'index.html',
@@ -119,7 +122,8 @@ def index():
             stdin_input=stdin_input,
             exec_time=round(exec_time, 2),  # ミリ秒で小数点以下2桁まで
             memory_usage=round(memory_usage, 2),
-            status=status
+            status=status,
+            profiled_output=profiled_output  # profiler.pyの出力を追加
         )
 
     # GETリクエスト時にも全ての変数をテンプレートに渡す
@@ -131,7 +135,8 @@ def index():
         stdin_input=stdin_input,
         exec_time=exec_time,          # 0.0
         memory_usage=memory_usage,    # 0
-        status=status                 # 空文字
+        status=status,                # 空文字
+        profiled_output=profiled_output  # 空のプロファイル出力
     )
 
 if __name__ == '__main__':
