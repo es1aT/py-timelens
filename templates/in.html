@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Code Profiler</title>
+  </head>
+  <body>
+    <h1>Pythonコードの実行とプロファイリング</h1>
+
+    <form method="POST">
+      <label for="code">Pythonコードを入力してください:</label><br />
+      <textarea
+        id="code"
+        name="code"
+        rows="10"
+        cols="50"
+        placeholder="ここにPythonコードを入力..."
+      ></textarea
+      ><br />
+
+      <label for="stdin">標準入力（複数行を改行で区切って入力できます）:</label
+      ><br />
+      <textarea
+        id="stdin"
+        name="stdin"
+        rows="5"
+        cols="50"
+        placeholder="複数の入力値をここに入力..."
+      ></textarea
+      ><br />
+
+      <button type="submit">実行</button>
+    </form>
+
+    <h2>結果:</h2>
+    <pre>{{ result }}</pre>
+  </body>
+</html>
