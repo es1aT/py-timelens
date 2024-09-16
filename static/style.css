@@ -159,11 +159,36 @@ button:hover {
 /* preタグのスタイル */
 pre {
   background-color: #f5f5f5;
-  padding: 15px;
+  padding: 10px;
+  /* 余白を少し減らす */
   border-radius: 4px;
   overflow: auto;
   white-space: pre-wrap;
+  /* 自動で改行 */
   word-wrap: break-word;
+  line-height: 1.2;
+  /* 行間を少し詰める */
+  margin: 0;
+  /* マージンをなくす */
+}
+
+/* textareaのスタイル */
+textarea {
+  width: 100%;
+  height: 180px;
+  padding: 10px;
+  /* パディングを少し減らす */
+  margin-top: 5px;
+  resize: vertical;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  background-color: #fafafa;
+  line-height: 1.2;
+  /* 行間を詰める */
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 /* ローディングオーバーレイのスタイル */
@@ -281,4 +306,163 @@ h1:before {
   content: '';
   border-radius: 3px;
   background: #65ca50;
+}
+
+
+
+/* コードセルを左寄せにする */
+.code-cell {
+  text-align: left;
+  font-family: monospace;
+  /* 等幅フォントでコードを表示 */
+  white-space: pre-wrap;
+  /* コードの改行とスペースを保持 */
+  padding-left: 10px;
+  /* 左側に少し余白を追加 */
+}
+
+/* 全体のフォントをコード部分と同じモノスペースに統一 */
+.design04 th,
+.design04 td {
+  font-family: 'Courier New', Courier, monospace;
+  /* 等幅フォントで統一 */
+  padding: 12px 15px;
+  border-bottom: 1px solid #dddddd;
+}
+
+/* 各列に対して最小幅を設定（ここが新しく追加された部分です） */
+.design04 th:first-child,
+.design04 td:first-child {
+  min-width: 60px;
+  /* 行番号列の最小幅 */
+}
+
+.design04 th:nth-child(2),
+.design04 td:nth-child(2) {
+  min-width: 100px;
+  /* 実行回数列の最小幅 */
+}
+
+.design04 th:nth-child(3),
+.design04 td:nth-child(3) {
+  min-width: 160px;
+  /* 実行時間列の最小幅 */
+}
+
+.design04 th:nth-child(4),
+.design04 td:nth-child(4) {
+  min-width: 160px;
+  /* 1回あたりの時間列の最小幅 */
+}
+
+.design04 th:nth-child(5),
+.design04 td:nth-child(5) {
+  min-width: 160px;
+  /* 全体に対する割合列の最小幅 */
+}
+
+.design04 {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  /* 全体の角を丸くする */
+  overflow: hidden;
+  /* 角丸を適用するために必要 */
+}
+
+.design04 th {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: solid 3px #388e3c;
+  font-weight: bold;
+}
+
+.design04 td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #dddddd;
+}
+
+/* 偶数行の背景色を変更 */
+.design04 tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* 行にマウスオーバーしたときの背景色 */
+.design04 tr:hover {
+  background-color: #f1f1f1;
+}
+
+.design04 th:first-child,
+.design04 td:first-child {
+  border-left: none;
+}
+
+.design04 th:last-child,
+.design04 td:last-child {
+  border-right: none;
+}
+
+/* 上部左角と右角を丸くする */
+.design04 th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.design04 th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* 下部左角と右角を丸くする */
+.design04 tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+.design04 tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+/* コードセルの上下の区切り線を点線に */
+.design04 td.code-cell {
+  border-top: 1px dashed #778ca3;
+  border-bottom: 1px dashed #778ca3;
+  padding-left: 10px;
+  white-space: nowrap;
+  /* 横スクロールを可能に */
+  overflow-x: auto;
+  /* 横スクロールバーを追加 */
+}
+
+/* コード列全体に横スクロールバーを追加 */
+.code-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  /* 横スクロールバーを追加 */
+  margin-top: 20px;
+  /* 上に余白を追加 */
+  border-top: 1px solid #ccc;
+  /* テーブルの上に区切り線を追加 */
+}
+
+/* 横スクロールバーのカスタマイズ（オプション） */
+.code-wrapper::-webkit-scrollbar {
+  height: 8px;
+  /* スクロールバーの高さを指定 */
+}
+
+.code-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.code-wrapper::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+
+.code-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
 }
