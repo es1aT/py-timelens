@@ -9,8 +9,6 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <!-- Chart.jsのCDNリンクを追加 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <div class="container">
@@ -79,19 +77,32 @@
       <!-- プロファイリング出力結果エリア -->
       <div class="profiling-output-section">
         <h2>プロファイリング結果:</h2>
-        <pre>{{ profiled_output }}</pre>  <!-- fu.pyの出力結果を表示 -->
-      </div>
 
-      <!-- プロファイリンググラフ表示エリア -->
-      {% if profile_data %}
-      <div class="profiling-section">
-        <h2>行ごとの実行時間</h2>
-        <canvas id="profileChart"></canvas>
+        <!-- 横スクロールを持つコードラッパー -->
+        <div class="code-wrapper">
+          <table class="design04">
+            <thead>
+              <tr>
+                <th>行番号</th>
+                <th>実行回数</th>
+                <th>実行時間 (ns)</th>
+                <th>1回あたりの時間 (ns)</th>
+                <th>コード内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for line in profiled_output %}
+              <tr>
+                <td>{{ line.line_no }}</td>
+                <td>{{ line.hits }}</td>
+                <td>{{ line.time }}</td>
+                <td>{{ line.per_hit }}</td>
+                <td class="code-cell"><pre>{{ line.code }}</pre></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-      {% endif %}
-    </div>
-
-    <!-- ローディングオーバーレイを追加 -->
-    <div id="loadingOverlay" style="display: none">
-      <div class="spinner"></div>
-      <p
+  </body>
+</html>
