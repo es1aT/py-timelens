@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 外部CSSファイルの読み込み -->
     <link rel="stylesheet" href="/static/style.css">
+    <!-- 外部JavaScriptファイルの読み込み -->
+    <script src="/static/script.js" defer></script>
   </head>
   <body>
     <div class="container">
@@ -121,16 +123,15 @@
         // グラフのデータ
         const profileData = {
           labels: [
-            {% for line in profiled_output %}
-              "{{ line.line_no }}"{% if not loop.last %},{% endif %}
-            {% endfor %}
+            {% for line in profiled_output %}"{{ line.line_no }}"{% if not loop.last %},{% endif %}{% endfor %}
+          ],
+          codes: [
+            {% for line in profiled_output %}"{{ line.code }}"{% if not loop.last %},{% endif %}{% endfor %}
           ],
           datasets: [{
             label: '実行回数',
             data: [
-              {% for line in profiled_output %}
-                {{ line.hits if line.hits != '-' else 0 }}{% if not loop.last %},{% endif %}
-              {% endfor %}
+              {% for line in profiled_output %}{{ line.hits if line.hits != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
             ],
             backgroundColor: [
               {% for line in profiled_output %}
@@ -164,9 +165,7 @@
           {
             label: '総実行時間 (ns)',
             data: [
-              {% for line in profiled_output %}
-                {{ line.time if line.time != '-' else 0 }}{% if not loop.last %},{% endif %}
-              {% endfor %}
+              {% for line in profiled_output %}{{ line.time if line.time != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
             ],
             backgroundColor: [
               {% for line in profiled_output %}
@@ -224,6 +223,17 @@
 
                 if (targetElement) {
                   targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(tooltipItem) {
+                    const lineNo = profileData.labels[tooltipItem.dataIndex];
+                    const code = profileData.codes[tooltipItem.dataIndex];
+                    return `行番号: ${lineNo}, コード: ${code}`;
+                  }
                 }
               }
             }
