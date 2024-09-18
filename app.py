@@ -7,7 +7,6 @@ import traceback  # 追加
 from flask import Flask, render_template, request
 from line_profiler import LineProfiler
 import time
-import re
 
 app = Flask(__name__)
 
@@ -25,8 +24,8 @@ def parse_profile_output(profile_output):
 
         try:
             # 各列の範囲を固定して取得
-            hits = line[10:22].strip() or '-'  # 実行回数 (列の開始位置: 10, 終了位置: 22)
-            time = line[22:29].strip() or '-'  # 実行時間 (列の開始位置: 22, 終了位置: 36)
+            hits = line[6:20].strip() or '-'  # 実行回数 (列の開始位置: 10, 終了位置: 22)
+            time = line[18:29].strip() or '-'  # 実行時間 (列の開始位置: 22, 終了位置: 36)
             per_hit = line[38:47].strip() or '-'  # 1回あたりの実行時間 (列の開始位置: 36, 終了位置: 50)
             code = line[53:] or '-'  # コード部分 (列の開始位置: 60以降)
             parsed_data.append({
@@ -144,9 +143,7 @@ def index():
             # プロファイル結果に行番号を追加
             for i, line in enumerate(profiled_output):
                 line['line_no'] = i + 1  # 1から始まる行番号
-            print(profiled_output)
             status = '成功' if not error else '失敗'
-
         except Exception as e:
             error = f'{e}'
             status = '失敗'

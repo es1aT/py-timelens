@@ -1,8 +1,10 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
 /* 全体のスタイル */
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f0f2f5;
 }
 
@@ -14,54 +16,8 @@ body {
   background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  /* 縦線を絶対配置するために相対配置 */
   border-radius: 8px;
   animation: fadeIn 1s ease-in-out;
-}
-
-/* フォームグループのスタイル */
-.form-group {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-/* 縦線の基本スタイル */
-.vertical-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -20px;
-  /* コード入力欄の外側に寄せる */
-  width: 3px;
-  /* 縦線の幅を太く */
-  background: linear-gradient(to bottom, #4caf50, #81c784);
-  /* グラデーションを追加 */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  /* シャドウを追加 */
-}
-
-/* 最初のフォームグループ（Pythonコード入力）に対する縦線の位置調整 */
-.form-group:first-child .vertical-line {
-  left: -30px;
-  /* さらに左に寄せる */
-}
-
-/* レスポンシブ対応: 小さい画面では縦線を非表示にする */
-@media (max-width: 768px) {
-  .vertical-line {
-    display: none;
-  }
-}
-
-/* アニメーションの定義 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 /* 見出しのスタイル */
@@ -69,6 +25,23 @@ h1 {
   text-align: center;
   color: #333333;
   margin-bottom: 30px;
+  font-size: 30px;
+}
+
+h1 span {
+  font-size: 18px;
+  display: block;
+}
+
+h1:before {
+  position: absolute;
+  bottom: -10px;
+  left: calc(50% - 30px);
+  width: 60px;
+  height: 5px;
+  content: "";
+  border-radius: 3px;
+  background: #65ca50;
 }
 
 /* ラベルのスタイル */
@@ -89,7 +62,7 @@ textarea {
   border: 1px solid #cccccc;
   border-radius: 4px;
   box-sizing: border-box;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 14px;
   background-color: #fafafa;
   transition: border-color 0.3s, box-shadow 0.3s;
@@ -107,7 +80,7 @@ button {
   padding: 12px 25px;
   font-size: 16px;
   color: #ffffff;
-  background-color: #4caf50;
+  background-color: #65ca50;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -115,25 +88,72 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #4caf50;
   transform: scale(1.05);
 }
 
-/* 入力と出力のコンテナ */
+/* グラフ用ボタン（小さめのサイズ） */
+.small-button {
+  background-color: #008CBA; /* 青色の背景 */
+  color: white; /* 文字色を白に */
+  padding: 8px 16px; /* 小さめのパディング */
+  font-size: 14px; /* 小さめのフォントサイズ */
+  border: none; /* ボーダーなし */
+  border-radius: 6px; /* 角を丸める */
+  cursor: pointer; /* ポインタカーソル */
+  margin: 4px; /* ボタンの間に少しのスペースを作る */
+}
+
+.small-button:hover {
+  background-color: #007B9E; /* ホバー時の色変更 */
+}
+
+
+/* 出力、ステータス、実行時間、メモリ使用量、エラーを横並びにする */
 .input-output-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-top: 40px;
 }
 
-/* 出力セクションとエラーセクションのスタイル */
 .output-section,
-.error-section {
-  margin-top: 25px;
+.error-section,
+.execution-info {
+  flex: 1;
+  margin: 10px;
 }
 
+/* 各出力のスタイル */
 .output-label,
 .error-label {
   font-weight: bold;
   color: #333333;
+  margin-bottom: 10px;
+}
+
+pre {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.2;
+  /* 1行の高さ */
+  margin: 0;
+  max-height: calc(1.2em * 6);
+  /* 1.2em (1行) × 6行 */
+  height: calc(1.2em * 6);
+  /* 6行に固定 */
+}
+
+.code-content {
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
 }
 
 /* 実行情報のテーブルスタイル */
@@ -143,48 +163,101 @@ button:hover {
   margin-top: 10px;
 }
 
-.label-cell {
-  width: 150px;
+.execution-info .label-cell {
   font-weight: bold;
   padding: 8px;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
 }
 
-.value-cell {
+.execution-info .value-cell {
   padding: 8px;
   border: 1px solid #ddd;
 }
 
-/* preタグのスタイル */
-pre {
-  background-color: #f5f5f5;
-  padding: 10px;
-  /* 余白を少し減らす */
-  border-radius: 4px;
-  overflow: auto;
-  white-space: pre-wrap;
-  /* 自動で改行 */
-  word-wrap: break-word;
-  line-height: 1.2;
-  /* 行間を少し詰める */
-  margin: 0;
-  /* マージンをなくす */
+/* グラフエリア */
+.profiling-output-section {
+  margin-top: 50px;
 }
 
-/* textareaのスタイル */
-textarea {
-  white-space: pre-wrap;
-  /* 改行やスペースを保持して表示 */
-  font-family: 'Courier New', Courier, monospace;
-  /* 等幅フォント */
-  font-size: 14px;
-  background-color: #fafafa;
-  padding: 10px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  line-height: 1.2;
-  overflow: auto;
+.code-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+/* プロファイリングテーブルのデザイン */
+.code-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  /* 横スクロールを有効に */
+  margin-top: 20px;
+}
+
+.design04 th {
+  background-color: #65ca50;
+  /* メインの緑色 */
+  color: white;
+  /* 文字を白に */
+  padding: 12px 15px;
+  position: relative;
+  text-align: left;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+
+  /* 下に濃い緑の線を引いて立体感を強調 */
+  border-bottom: 4px solid #4caf50;
+  /* 濃い緑で淵を作る */
+
+  /* 内側に少し影を追加して立体感を出す */
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  /* 内側の影 */
+}
+
+.design04 {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.design04 td {
+  white-space: nowrap;
+  /* テーブル内のテキスト折り返しを防ぐ */
+  padding: 12px 15px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.design04 tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.design04 tr:hover {
+  background-color: #f1f1f1;
+}
+
+.code-cell {
+  white-space: nowrap;
+  /* コードの折り返しを防ぐ */
+}
+
+.code-content {
+  display: inline-block;
+}
+
+/* アニメーションの定義 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ローディングオーバーレイのスタイル */
@@ -204,7 +277,7 @@ textarea {
 
 .spinner {
   border: 8px solid #f3f3f3;
-  border-top: 8px solid #4caf50;
+  border-top: 8px solid #65ca50;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -222,251 +295,46 @@ textarea {
   }
 }
 
-#loadingOverlay p {
-  font-size: 18px;
-  color: #333333;
-}
-
-/* スクロールバーのカスタマイズ（オプション） */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #b3b3b3;
-}
-
-.input-output-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  /* 各セクションを同じ高さにする */
-}
-
-.output-section,
-.execution-info,
-.error-section {
-  flex: 1;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.output-section pre,
-.error-section pre {
-  flex-grow: 1;
-  /* コンテンツが垂直に伸びるようにする */
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-table {
-  width: 100%;
-  height: 100%;
-  /* テーブルを全体に広げる */
-}
-
-.label-cell {
-  font-weight: bold;
-}
-
-h1 {
-  font-size: 30px;
-  font-size: 3rem;
-  position: relative;
-  padding: 1.5rem;
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
   text-align: center;
 }
 
-h1 span {
-  font-size: 18px;
-  font-size: 1.8rem;
-  display: block;
-}
-
-h1:before {
-  position: absolute;
-  bottom: -10px;
-  left: calc(50% - 30px);
-  width: 60px;
-  height: 5px;
-  content: '';
-  border-radius: 3px;
-  background: #65ca50;
-}
-
-/* コードセルを左寄せにする */
-.code-cell pre {
+h1 {
   margin: 0;
-  /* デフォルトの余白を削除 */
-  padding: 0;
-  /* デフォルトのパディングを削除 */
-  border: none;
-  /* 枠を消す */
-  background: none;
-  /* 背景を透明に */
-  white-space: pre-wrap;
-  /* 空白や改行を保持しつつ、自動改行 */
-  font-family: 'Courier New', Courier, monospace;
-  /* 等幅フォント */
+  line-height: 1.2;
 }
 
-/* 全体のフォントをコード部分と同じモノスペースに統一 */
-.design04 th,
-.design04 td {
-  font-family: 'Courier New', Courier, monospace;
-  /* 等幅フォントで統一 */
-  padding: 12px 15px;
-  border-bottom: 1px solid #dddddd;
+p {
+  margin: 0 0 1.6rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid #ddd;
 }
 
-/* 各列に対して最小幅を設定（ここが新しく追加された部分です） */
-.design04 th:first-child,
-.design04 td:first-child {
-  min-width: 3px;
-  max-width: 3px;
-  /* 行番号列の最小幅 */
+.radio-inline__input {
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute !important;
 }
 
-.design04 th:nth-child(2),
-.design04 td:nth-child(2) {
-  min-width: 10px;
-  max-width: 10px;
-  /* 実行回数列の最小幅 */
+.radio-inline__label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin-right: 18px;
+  border-radius: 3px;
+  transition: all .2s;
 }
 
-.design04 th:nth-child(3),
-.design04 td:nth-child(3) {
-  min-width: 17px;
-  max-width: 17px;
-  /* 実行時間列の最小幅 */
+.radio-inline__input:checked+.radio-inline__label {
+  background: #65ca50;
+  color: #ffffff;
+  text-shadow: 0 0 1px rgba(0, 0, 0, .7);
 }
 
-.design04 th:nth-child(4),
-.design04 td:nth-child(4) {
-  min-width: 10px;
-  max-width: 10px;
-  /* 1回あたりの時間列の最小幅 */
-}
-
-.design04 th:nth-child(5),
-.design04 td:nth-child(5) {
-  min-width: 100px;
-  max-width: 100px;
-  /* 全体に対する割合列の最小幅 */
-}
-
-.design04 {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 16px;
-  text-align: left;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  /* 全体の角を丸くする */
-  overflow: hidden;
-  /* 角丸を適用するために必要 */
-}
-
-.design04 th {
-  background-color: #4caf50;
-  color: white;
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: solid 3px #388e3c;
-  font-weight: bold;
-}
-
-.design04 td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #dddddd;
-}
-
-/* 偶数行の背景色を変更 */
-.design04 tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-/* 行にマウスオーバーしたときの背景色 */
-.design04 tr:hover {
-  background-color: #f1f1f1;
-}
-
-.design04 th:first-child,
-.design04 td:first-child {
-  border-left: none;
-}
-
-.design04 th:last-child,
-.design04 td:last-child {
-  border-right: none;
-}
-
-/* 上部左角と右角を丸くする */
-.design04 th:first-child {
-  border-top-left-radius: 8px;
-}
-
-.design04 th:last-child {
-  border-top-right-radius: 8px;
-}
-
-/* 下部左角と右角を丸くする */
-.design04 tr:last-child td:first-child {
-  border-bottom-left-radius: 8px;
-}
-
-.design04 tr:last-child td:last-child {
-  border-bottom-right-radius: 8px;
-}
-
-/* コードセルの上下の区切り線を点線に */
-.design04 td.code-cell {
-  border-top: 1px dashed #778ca3;
-  border-bottom: 1px dashed #778ca3;
-  padding-left: 10px;
-  white-space: nowrap;
-  /* 横スクロールを可能に */
-  overflow-x: auto;
-  /* 横スクロールバーを追加 */
-}
-
-/* コード列全体に横スクロールバーを追加 */
-.code-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  /* 横スクロールバーを追加 */
-  margin-top: 20px;
-  /* 上に余白を追加 */
-  border-top: 1px solid #ccc;
-  /* テーブルの上に区切り線を追加 */
-}
-
-/* 横スクロールバーのカスタマイズ（オプション） */
-.code-wrapper::-webkit-scrollbar {
-  height: 8px;
-  /* スクロールバーの高さを指定 */
-}
-
-.code-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.code-wrapper::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border-radius: 4px;
-}
-
-.code-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #b3b3b3;
+.radio-inline__input:focus+.radio-inline__label {
+  outline-color: #f5f5f5;
+  outline-offset: -2px;
+  outline-style: auto;
+  outline-width: 5px;
 }

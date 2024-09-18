@@ -4,15 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Py-TimeLens</title>
-    <!-- 外部CSSファイルのリンク -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <!-- Chart.jsのCDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 外部CSSファイルの読み込み -->
+    <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
     <div class="container">
-      <h1><span>Py-TimeLens</span></h1>
+      <h1>Py-TimeLens</h1>
 
       <!-- フォームを使ってサーバーに送信 -->
       <form id="codeForm" action="/" method="POST">
@@ -23,9 +22,7 @@
           name="code"
           placeholder="ここにPythonコードを入力..."
           required
-        >
-{{ code }}</textarea
-        >
+        >{{ code }}</textarea>
 
         <!-- 標準入力エリア -->
         <label for="stdin-input" class="input-label">標準入力</label>
@@ -33,12 +30,10 @@
           id="stdin-input"
           name="stdin"
           placeholder="標準入力をここに入力..."
-        >
-{{ stdin_input }}</textarea
-        >
+        >{{ stdin_input }}</textarea>
 
         <!-- 実行ボタン -->
-        <button id="executeButton" type="submit">実行</button>
+        <button>実行</button>
       </form>
 
       <!-- 出力結果と標準エラー表示エリア -->
@@ -74,11 +69,11 @@
         </div>
       </div>
 
-      <!-- プロファイリング出力結果エリア -->
       <div class="profiling-output-section">
+        <br>
         <h2>プロファイリング結果:</h2>
 
-        <!-- 横スクロールを持つコードラッパー -->
+        <!-- 表（プロファイリングの詳細） -->
         <div class="code-wrapper">
           <table class="design04">
             <thead>
@@ -92,17 +87,181 @@
             </thead>
             <tbody>
               {% for line in profiled_output %}
-              <tr>
+              <tr id="line-{{ line.line_no }}">
                 <td>{{ line.line_no }}</td>
-                <td>{{ line.hits }}</td>
-                <td>{{ line.time }}</td>
-                <td>{{ line.per_hit }}</td>
-                <td class="code-cell"><pre>{{ line.code }}</pre></td>
+                <td>{{ line.hits if line.hits }}</td>
+                <td>{{ line.time if line.time }}</td>
+                <td>{{ line.per_hit if line.per_hit }}</td>
+                <td class="code-cell"><span class="code-content">{{ line.code }}</span></td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
+        <br>
+        <!-- グラフエリア -->
+        <h2>グラフ出力結果:</h2>
+        <!-- ラジオボタンによる選択肢 -->
+        <fieldset>
+          <input id="showHits" class="radio-inline__input" type="radio" name="graph-option" value="hits" checked="checked"/>
+          <label class="radio-inline__label" for="showHits">実行回数を表示</label>
+
+          <input id="showTime" class="radio-inline__input" type="radio" name="graph-option" value="time"/>
+          <label class="radio-inline__label" for="showTime">実行時間を表示</label>
+        </fieldset>
+        <br>
+        <canvas id="profileChart" width="400" height="200"></canvas>
       </div>
+
+    <!-- 統合したJavaScript -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('profileChart').getContext('2d');
+
+        // グラフのデータ
+        const profileData = {
+          labels: [
+            {% for line in profiled_output %}
+              "{{ line.line_no }}"{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ],
+          datasets: [{
+            label: '実行回数',
+            data: [
+              {% for line in profiled_output %}
+                {{ line.hits if line.hits != '-' else 0 }}{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ],
+            backgroundColor: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  'rgba(192, 192, 192, 0.2)',  // I/Oやimport行の色を薄くする
+                {% else %}
+                  'rgba(75, 192, 192, 0.2)',  // 通常の行の色
+                {% endif %}
+              {% endfor %}
+            ],
+            borderColor: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  'rgba(192, 192, 192, 1)',  // I/Oやimport行の境界線
+                {% else %}
+                  'rgba(75, 192, 192, 1)',  // 通常の行の境界線
+                {% endif %}
+              {% endfor %}
+            ],
+            borderDash: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  [5, 5],  // I/Oやimport行は点線にする
+                {% else %}
+                  [],  // 通常行は実線
+                {% endif %}
+              {% endfor %}
+            ],
+            borderWidth: 1
+          },
+          {
+            label: '総実行時間 (ns)',
+            data: [
+              {% for line in profiled_output %}
+                {{ line.time if line.time != '-' else 0 }}{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ],
+            backgroundColor: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  'rgba(255, 192, 192, 0.2)',  // I/Oやimport行を赤系で薄く
+                {% else %}
+                  'rgba(255, 99, 132, 0.2)',  // 通常の行の色
+                {% endif %}
+              {% endfor %}
+            ],
+            borderColor: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  'rgba(255, 192, 192, 1)',  // I/Oやimport行の境界線
+                {% else %}
+                  'rgba(255, 99, 132, 1)',  // 通常の行の境界線
+                {% endif %}
+              {% endfor %}
+            ],
+            borderDash: [
+              {% for line in profiled_output %}
+                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
+                  [5, 5],  // I/Oやimport行は点線
+                {% else %}
+                  [],  // 通常行は実線
+                {% endif %}
+              {% endfor %}
+            ],
+            borderWidth: 1
+          }]
+        };
+
+        // グラフの初期設定
+        let currentDatasetIndex = 0;  // 初期表示は実行回数
+        const profileChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: profileData.labels,
+            datasets: [profileData.datasets[currentDatasetIndex]],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            onClick: function(event, elements) {
+              if (elements.length > 0) {
+                const index = elements[0].index;
+                const label = profileData.labels[index];  // クリックされたラベル（行番号）
+
+                // クリックされた行番号に対応する要素にスクロール
+                const elementId = `line-${label}`;
+                const targetElement = document.getElementById(elementId);
+
+                if (targetElement) {
+                  targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }
+          }
+        });
+
+        // ラジオボタンの選択状態によってデータセットを変更する
+        const radioButtons = document.querySelectorAll('input[name="graph-option"]');
+        radioButtons.forEach(function(button) {
+          button.addEventListener('change', function() {
+            if (this.value === 'hits') {
+              currentDatasetIndex = 0;
+            } else {
+              currentDatasetIndex = 1;
+            }
+            profileChart.data.datasets = [profileData.datasets[currentDatasetIndex]];
+            profileChart.update();
+          });
+        });
+
+        // タブキーによるインデントを有効にする
+        const codeInput = document.getElementById("code-input");
+        if (codeInput) {
+          codeInput.addEventListener("keydown", function (e) {
+            if (e.key === "Tab") {
+              e.preventDefault();
+              let start = this.selectionStart;
+              let end = this.selectionEnd;
+              const indent = "  ";
+              this.value =
+                this.value.substring(0, start) +
+                indent +
+                this.value.substring(end);
+              this.selectionStart = this.selectionEnd = start + indent.length;
+            }
+          });
+        }
+      });
+    </script>
   </body>
 </html>
