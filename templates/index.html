@@ -4,17 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Py-TimeLens</title>
+    <!-- ファビコンの指定 -->
+    <link rel="icon" href="/static/favicon.ico" type="image/icon">
     <!-- Chart.jsのCDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 外部CSSファイルの読み込み -->
     <link rel="stylesheet" href="/static/style.css">
-    <!-- 外部JavaScriptファイルの読み込み -->
-    <script src="/static/script.js" defer></script>
   </head>
   <body>
     <div class="container">
       <h1>Py-TimeLens</h1>
-
       <!-- フォームを使ってサーバーに送信 -->
       <form id="codeForm" action="/" method="POST">
         <!-- Pythonコード入力エリア -->
@@ -82,8 +81,8 @@
               <tr>
                 <th>行番号</th>
                 <th>実行回数</th>
-                <th>実行時間 (ns)</th>
-                <th>1回あたりの時間 (ns)</th>
+                <th>総実行時間 (ns)</th>
+                <th>時間の占有率 (%)</th>
                 <th>コード内容</th>
               </tr>
             </thead>
@@ -230,9 +229,14 @@
               tooltip: {
                 callbacks: {
                   label: function(tooltipItem) {
-                    const lineNo = profileData.labels[tooltipItem.dataIndex];
-                    const code = profileData.codes[tooltipItem.dataIndex];
-                    return `行番号: ${lineNo}, コード: ${code}`;
+                    const hits = profileData.datasets[0].data[tooltipItem.dataIndex];
+                    const time = profileData.datasets[1].data[tooltipItem.dataIndex];
+                    const code = profileData.codes[tooltipItem.dataIndex].trim();
+                    if (currentDatasetIndex === 0) {
+                      return `実行回数: ${hits}, コード: ${code}`;
+                    } else {
+                      return `総実行時間 (ns): ${time}, コード: ${code}`;
+                    }
                   }
                 }
               }

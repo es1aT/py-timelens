@@ -40,7 +40,7 @@ def reset_io_capture(old_stdin, old_stdout, old_stderr):
 
 def run_profiled_code(code, stdin_input):
     result, output, error = "", "", ""
-    temp_filename = "torima.py"
+    temp_filename = "judge.py"
     profiler = LineProfiler()
 
     # ユーザーコードを一時ファイルに保存
@@ -52,7 +52,7 @@ def run_profiled_code(code, stdin_input):
 
     try:
         # 一時ファイルをモジュールとしてインポート
-        spec = importlib.util.spec_from_file_location("torima", temp_filename)
+        spec = importlib.util.spec_from_file_location("judge", temp_filename)
         temp_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(temp_module)
 
@@ -71,7 +71,12 @@ def run_profiled_code(code, stdin_input):
 
     except Exception as e:
         tb = traceback.format_exc()
-        error = tb[:tb.find("File")] + tb[tb.find("^^^^^^^^^^^^^^^^^^^^^^^^^^^") + len("^^^^^^^^^^^^^^^^^^^^^^^^^^^"):] if "File" in tb and "^^^^^^^^^^^^^^^^^^^^^^^^^^^" in tb else tb
+        tbLines = tb.split("\n")
+        last = -1
+        for i, line in enumerate(tbLines):
+            if "File " in line:
+                last = i
+        error = tbLines[0] + "\n" + tbLines[last]
     finally:
         reset_io_capture(old_stdin, old_stdout, old_stderr)
         if os.path.exists(temp_filename):

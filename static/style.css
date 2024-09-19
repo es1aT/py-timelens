@@ -92,23 +92,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* グラフ用ボタン（小さめのサイズ） */
-.small-button {
-  background-color: #008CBA; /* 青色の背景 */
-  color: white; /* 文字色を白に */
-  padding: 8px 16px; /* 小さめのパディング */
-  font-size: 14px; /* 小さめのフォントサイズ */
-  border: none; /* ボーダーなし */
-  border-radius: 6px; /* 角を丸める */
-  cursor: pointer; /* ポインタカーソル */
-  margin: 4px; /* ボタンの間に少しのスペースを作る */
-}
-
-.small-button:hover {
-  background-color: #007B9E; /* ホバー時の色変更 */
-}
-
-
 /* 出力、ステータス、実行時間、メモリ使用量、エラーを横並びにする */
 .input-output-container {
   display: flex;
@@ -173,11 +156,6 @@ pre {
 .execution-info .value-cell {
   padding: 8px;
   border: 1px solid #ddd;
-}
-
-/* グラフエリア */
-.profiling-output-section {
-  margin-top: 50px;
 }
 
 .code-wrapper {
@@ -273,18 +251,25 @@ pre {
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  /* 他の要素より前面に表示する */
 }
 
+/* スピナーのスタイル */
 .spinner {
   border: 8px solid #f3f3f3;
+  /* 薄いグレーの背景 */
   border-top: 8px solid #65ca50;
+  /* メインの色 */
   border-radius: 50%;
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
+  /* 回転アニメーション */
   margin-bottom: 15px;
+  /* スピナーの下に余白を設ける */
 }
 
+/* スピナーのアニメーション */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
