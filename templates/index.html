@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 外部CSSファイルの読み込み -->
     <link rel="stylesheet" href="/static/style.css">
+    <!-- 外部JavaScriptファイルの読み込み -->
+    <script src="/static/script.js"></script>
   </head>
   <body>
     <div class="container">
@@ -54,11 +56,11 @@
             </tr>
             <tr>
               <td class="label-cell">全体の実行時間</td>
-              <td class="value-cell">{{ exec_time | round(1) }} ms</td>
+              <td class="value-cell">{{ exec_time | round(2) }} ms</td>
             </tr>
             <tr>
               <td class="label-cell">総使用メモリ量</td>
-              <td class="value-cell">{{ memory_usage }} KB</td>
+              <td class="value-cell">{{ memory_usage | round(2) }} KB</td>
             </tr>
           </table>
         </div>
@@ -116,166 +118,20 @@
 
     <!-- 統合したJavaScript -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const ctx = document.getElementById('profileChart').getContext('2d');
-
-        // グラフのデータ
-        const profileData = {
-          labels: [
-            {% for line in profiled_output %}"{{ line.line_no }}"{% if not loop.last %},{% endif %}{% endfor %}
-          ],
-          codes: [
-            {% for line in profiled_output %}"{{ line.code }}"{% if not loop.last %},{% endif %}{% endfor %}
-          ],
-          datasets: [{
-            label: '実行回数',
-            data: [
-              {% for line in profiled_output %}{{ line.hits if line.hits != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
-            ],
-            backgroundColor: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  'rgba(192, 192, 192, 0.2)',  // I/Oやimport行の色を薄くする
-                {% else %}
-                  'rgba(75, 192, 192, 0.2)',  // 通常の行の色
-                {% endif %}
-              {% endfor %}
-            ],
-            borderColor: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  'rgba(192, 192, 192, 1)',  // I/Oやimport行の境界線
-                {% else %}
-                  'rgba(75, 192, 192, 1)',  // 通常の行の境界線
-                {% endif %}
-              {% endfor %}
-            ],
-            borderDash: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  [5, 5],  // I/Oやimport行は点線にする
-                {% else %}
-                  [],  // 通常行は実線
-                {% endif %}
-              {% endfor %}
-            ],
-            borderWidth: 1
-          },
-          {
-            label: '総実行時間 (ns)',
-            data: [
-              {% for line in profiled_output %}{{ line.time if line.time != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
-            ],
-            backgroundColor: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  'rgba(255, 192, 192, 0.2)',  // I/Oやimport行を赤系で薄く
-                {% else %}
-                  'rgba(255, 99, 132, 0.2)',  // 通常の行の色
-                {% endif %}
-              {% endfor %}
-            ],
-            borderColor: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  'rgba(255, 192, 192, 1)',  // I/Oやimport行の境界線
-                {% else %}
-                  'rgba(255, 99, 132, 1)',  // 通常の行の境界線
-                {% endif %}
-              {% endfor %}
-            ],
-            borderDash: [
-              {% for line in profiled_output %}
-                {% if 'input(' in line.code or 'print(' in line.code or 'import ' in line.code %}
-                  [5, 5],  // I/Oやimport行は点線
-                {% else %}
-                  [],  // 通常行は実線
-                {% endif %}
-              {% endfor %}
-            ],
-            borderWidth: 1
-          }]
-        };
-
-        // グラフの初期設定
-        let currentDatasetIndex = 0;  // 初期表示は実行回数
-        const profileChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: profileData.labels,
-            datasets: [profileData.datasets[currentDatasetIndex]],
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            },
-            onClick: function(event, elements) {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                const label = profileData.labels[index];  // クリックされたラベル（行番号）
-
-                // クリックされた行番号に対応する要素にスクロール
-                const elementId = `line-${label}`;
-                const targetElement = document.getElementById(elementId);
-
-                if (targetElement) {
-                  targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(tooltipItem) {
-                    const hits = profileData.datasets[0].data[tooltipItem.dataIndex];
-                    const time = profileData.datasets[1].data[tooltipItem.dataIndex];
-                    const code = profileData.codes[tooltipItem.dataIndex].trim();
-                    if (currentDatasetIndex === 0) {
-                      return `実行回数: ${hits}, コード: ${code}`;
-                    } else {
-                      return `総実行時間 (ns): ${time}, コード: ${code}`;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        // ラジオボタンの選択状態によってデータセットを変更する
-        const radioButtons = document.querySelectorAll('input[name="graph-option"]');
-        radioButtons.forEach(function(button) {
-          button.addEventListener('change', function() {
-            if (this.value === 'hits') {
-              currentDatasetIndex = 0;
-            } else {
-              currentDatasetIndex = 1;
-            }
-            profileChart.data.datasets = [profileData.datasets[currentDatasetIndex]];
-            profileChart.update();
-          });
-        });
-
-        // タブキーによるインデントを有効にする
-        const codeInput = document.getElementById("code-input");
-        if (codeInput) {
-          codeInput.addEventListener("keydown", function (e) {
-            if (e.key === "Tab") {
-              e.preventDefault();
-              let start = this.selectionStart;
-              let end = this.selectionEnd;
-              const indent = "  ";
-              this.value =
-                this.value.substring(0, start) +
-                indent +
-                this.value.substring(end);
-              this.selectionStart = this.selectionEnd = start + indent.length;
-            }
-          });
-        }
-      });
+      const profileData = {
+        labels: [
+          {% for line in profiled_output %}"{{ line.line_no }}"{% if not loop.last %},{% endif %}{% endfor %}
+        ],
+        codes: [
+          {% for line in profiled_output %}"{{ line.code }}"{% if not loop.last %},{% endif %}{% endfor %}
+        ],
+        hits: [
+          {% for line in profiled_output %}{{ line.hits if line.hits != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
+        ],
+        times: [
+          {% for line in profiled_output %}{{ line.time if line.time != '-' else 0 }}{% if not loop.last %},{% endif %}{% endfor %}
+        ]
+      };
     </script>
   </body>
 </html>

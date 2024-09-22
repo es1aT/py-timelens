@@ -5,7 +5,7 @@ import importlib.util
 import traceback
 from flask import Flask, render_template, request
 from line_profiler import LineProfiler
-import time
+import tracemalloc  # 追加
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ def parse_profile_output(profile_output):
     parsed_data = []
 
     for i, line in enumerate(lines):
-        if i < 9 or not line.strip():  # 最初の9行を無視し、空行はスキップ
+        if i < 9 or not line.strip():
             continue
 
         try:
@@ -43,15 +43,14 @@ def run_profiled_code(code, stdin_input):
     temp_filename = "judge.py"
     profiler = LineProfiler()
 
-    # ユーザーコードを一時ファイルに保存
     with open(temp_filename, 'w', encoding='utf-8') as f:
         f.write(f"def user_function():\n{indent_code(code)}\n")
 
-    # IOキャプチャの設定
     old_stdin, old_stdout, old_stderr = handle_io_capture(stdin_input)
 
     try:
-        # 一時ファイルをモジュールとしてインポート
+        tracemalloc.start()  # メモリ計測開始
+
         spec = importlib.util.spec_from_file_location("judge", temp_filename)
         temp_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(temp_module)
@@ -64,25 +63,25 @@ def run_profiled_code(code, stdin_input):
         output = sys.stdout.getvalue()
         error = sys.stderr.getvalue()
 
+        current, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+        memory_usage = peak / 1024  # KBに変換
+
         if not error:
             profile_output = io.StringIO()
             profiler.print_stats(stream=profile_output)
             result = profile_output.getvalue()
 
-    except Exception as e:
-        tb = traceback.format_exc()
-        tbLines = tb.split("\n")
-        last = -1
-        for i, line in enumerate(tbLines):
-            if "File " in line:
-                last = i
-        error = tbLines[0] + "\n" + tbLines[last]
+    except Exception:
+        error = traceback.format_exc()
+        memory_usage = 0
     finally:
         reset_io_capture(old_stdin, old_stdout, old_stderr)
         if os.path.exists(temp_filename):
             os.remove(temp_filename)
 
-    return result, output, error
+    return result, output, error, memory_usage
 
 def indent_code(code):
     return '\n'.join(['    ' + line for line in code.splitlines()])
@@ -90,21 +89,28 @@ def indent_code(code):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     output, error, code, stdin_input = '', '', '', ''
-    exec_time, memory_usage = 0.0, 0
+    exec_time = 0.0
     status, profiled_output = '', []
+    memory_usage = 0.0
 
     if request.method == 'POST':
         code = request.form['code']
         stdin_input = request.form.get('stdin', '')
 
         try:
-            start_time = time.time()
-            profiled_output_raw, output, error = run_profiled_code(code, stdin_input)
-            exec_time = (time.time() - start_time) * 1000
+            profiled_output_raw, output, error, memory_usage = run_profiled_code(code, stdin_input)
             profiled_output = parse_profile_output(profiled_output_raw)
+
+            total_exec_time = 0.0
 
             for i, line in enumerate(profiled_output):
                 line['line_no'] = i + 1
+                line['hits'] = int(line['hits']) if line['hits'] != '-' else 0
+                line['time'] = float(line['time']) if line['time'] != '-' else 0.0
+                line['per_hit'] = float(line['per_hit']) if line['per_hit'] != '-' else 0.0
+                total_exec_time += line['time']
+
+            exec_time = total_exec_time / 1000000  # nsをmsに変換
 
             status = '成功' if not error else '失敗'
         except Exception as e:
